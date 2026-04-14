@@ -1,0 +1,169 @@
+# NUTRITION GUIDE - Meal Planner
+
+## Healthy Eating Guidelines
+
+### What Makes a Meal Healthy?
+
+A healthy meal should:
+- **Calories**: Between 300-600 calories per meal
+- **Balance**: Include protein, carbs, and vegetables
+- **Quality**: Prioritize whole, unprocessed foods
+- **Portions**: Appropriate serving sizes
+
+---
+
+## Calorie Ranges by Meal Type
+
+- **Breakfast**: 300-400 calories
+- **Lunch**: 400-600 calories
+- **Dinner**: 400-600 calories
+- **Snacks**: 100-200 calories
+
+---
+
+## Food Groups & Examples
+
+### 1. Proteins (Lean Options)
+- **Chicken breast**: 165 cal per 100g
+- **Fish (salmon)**: 206 cal per 100g
+- **Fish (tilapia)**: 96 cal per 100g
+- **Tofu**: 76 cal per 100g
+- **Beans (black)**: 132 cal per 100g
+- **Eggs**: 155 cal per 100g
+
+**Recommendation**: 100-150g per meal
+
+---
+
+### 2. Carbohydrates (Complex Carbs Preferred)
+- **Brown rice**: 111 cal per 100g
+- **White rice**: 130 cal per 100g
+- **Quinoa**: 120 cal per 100g
+- **Whole wheat pasta**: 124 cal per 100g
+- **Sweet potato**: 86 cal per 100g
+- **Oats**: 389 cal per 100g
+
+**Recommendation**: 150-200g per meal
+
+---
+
+### 3. Vegetables (Low Calorie, High Nutrients)
+- **Broccoli**: 34 cal per 100g
+- **Spinach**: 23 cal per 100g
+- **Carrots**: 41 cal per 100g
+- **Tomatoes**: 18 cal per 100g
+- **Lettuce**: 15 cal per 100g
+- **Bell peppers**: 31 cal per 100g
+
+**Recommendation**: 200-300g per meal (unlimited!)
+
+---
+
+### 4. Healthy Fats
+- **Avocado**: 160 cal per 100g
+- **Olive oil**: 884 cal per 100ml (use sparingly!)
+- **Nuts (almonds)**: 579 cal per 100g
+- **Seeds (chia)**: 486 cal per 100g
+
+**Recommendation**: 10-20g per meal
+
+---
+
+## Sample Healthy Meals
+
+### 🥗 Salada Caesar (350 cal)
+- 100g lettuce (15 cal)
+- 150g grilled chicken (248 cal)
+- 20g parmesan (78 cal)
+- 10ml olive oil dressing (88 cal)
+- **Total**: ~350 calories
+- **Is Healthy**: Yes ✓
+
+### 🍚 Arroz com Feijão (450 cal)
+- 200g brown rice (222 cal)
+- 100g black beans (132 cal)
+- 100g grilled chicken (165 cal)
+- Vegetables (negligible)
+- **Total**: ~450 calories
+- **Is Healthy**: Yes ✓
+
+### 🍝 Pasta with Vegetables (380 cal)
+- 150g whole wheat pasta (186 cal)
+- 200g mixed vegetables (80 cal)
+- 100g tomato sauce (40 cal)
+- 50g grilled chicken (83 cal)
+- **Total**: ~380 calories
+- **Is Healthy**: Yes ✓
+
+### 🍕 Pizza Margherita (800 cal)
+- Dough, cheese, tomato sauce
+- **Total**: ~800 calories
+- **Is Healthy**: No ✗ (too many calories, processed)
+
+---
+
+## Meal Planning Tips
+
+1. **Prep Ingredients First**
+   - Wash and cut vegetables
+   - Cook proteins in batches
+   - Portion carbs (use a scale!)
+
+2. **Use Proper Quantities**
+   - Format: "200g", "1 xícara", "150ml"
+   - Be specific for accurate tracking
+
+3. **Balance Your Plate**
+   - 50% vegetables
+   - 25% protein
+   - 25% complex carbs
+
+4. **Track Calories**
+   - Use the system to calculate totals
+   - Adjust portions as needed
+   - Aim for 1500-2000 cal/day (varies by person)
+
+---
+
+## Warning Signs of Unhealthy Meals
+
+❌ **Too Many Calories**: > 700 per meal
+❌ **Processed Foods**: Fast food, frozen meals
+❌ **Too Much Fat**: Fried foods, heavy sauces
+❌ **Low Nutrients**: Mostly carbs, no vegetables
+❌ **Large Portions**: More than needed
+
+---
+
+## Common Ingredient Quantities
+
+- **Rice**: 200g cooked = 1 cup
+- **Chicken**: 150g = palm of hand
+- **Vegetables**: 200g = 2 cups
+- **Oil**: 1 tablespoon = 15ml
+- **Beans**: 100g = 1/2 cup
+
+---
+
+## Hydration
+
+Don't forget water!
+- **Recommendation**: 2-3 liters per day
+- Drink before meals to help with portion control
+- Avoid sugary drinks
+
+---
+
+## Questions to Ask When Planning
+
+1. Does this meal have protein?
+2. Does it include vegetables?
+3. Are the carbs whole/complex?
+4. Is the total under 600 calories?
+5. Will I feel satisfied after eating?
+
+If you answered YES to most questions, it's probably healthy! ✓
+
+---
+
+*This guide is for informational purposes only. Consult a nutritionist for personalized advice.*

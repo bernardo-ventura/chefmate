@@ -1,0 +1,133 @@
+# DATABASE SCHEMA - Meal Planner
+
+## Overview
+SQLite database with 2 related tables for meal planning and nutrition tracking.
+
+---
+
+## Table: meal
+
+Stores meal information with nutritional details.
+
+**Columns:**
+- `id`: INTEGER PRIMARY KEY (auto-increment)
+- `name`: TEXT NOT NULL (indexed for faster searches)
+- `description`: TEXT (default: empty string)
+- `calories`: REAL (floating point number, must be >= 0)
+- `is_healthy`: BOOLEAN (default: true)
+
+**Example:**
+```json
+{
+  "id": 1,
+  "name": "Salada Caesar",
+  "description": "Salada com frango grelhado",
+  "calories": 350.0,
+  "is_healthy": true
+}
+```
+
+---
+
+## Table: ingredient
+
+Stores ingredients for each meal.
+
+**Columns:**
+- `id`: INTEGER PRIMARY KEY (auto-increment)
+- `name`: TEXT NOT NULL (indexed)
+- `quantity`: TEXT NOT NULL (format: "number + unit", e.g., "200g", "1 xícara")
+- `meal_id`: INTEGER NOT NULL (FOREIGN KEY → meal.id)
+
+**Validation Rules:**
+- `quantity` must match pattern: `^\d+\.?\d*\s*[a-zA-Z]+$`
+- Examples: "200g", "1.5 kg", "2 xícaras"
+
+**Example:**
+```json
+{
+  "id": 1,
+  "name": "Frango grelhado",
+  "quantity": "150g",
+  "meal_id": 1
+}
+```
+
+---
+
+## Relationships
+
+**1:N Relationship**
+- One Meal → Many Ingredients
+- When querying a meal, you can include its ingredients
+- IMPORTANT: Cannot delete a meal that has ingredients (will raise exception)
+
+**SQL Schema:**
+```sql
+CREATE TABLE meal (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT DEFAULT '',
+    calories REAL CHECK(calories >= 0),
+    is_healthy BOOLEAN DEFAULT 1
+);
+
+CREATE INDEX idx_meal_name ON meal(name);
+
+CREATE TABLE ingredient (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    quantity TEXT NOT NULL,
+    meal_id INTEGER NOT NULL,
+    FOREIGN KEY (meal_id) REFERENCES meal(id)
+);
+
+CREATE INDEX idx_ingredient_name ON ingredient(name);
+```
+
+---
+
+## Special Operations
+
+1. **Delete Meal with Ingredients** → Raises Exception
+   - If meal has ingredients, deletion is blocked
+   - Must delete ingredients first
+
+2. **Invalid Quantity Format** → Returns Error
+   - Quantity must be: number + unit
+   - Invalid: "some", "abc", "123" (missing unit)
+
+3. **Add Calories (String vs Float)**
+   - `add_calories_string(meal_id, "50.5")` - accepts string
+   - `add_calories_float(meal_id, 50.5)` - accepts float
+   - Both add calories to the meal's total
+
+---
+
+## Usage Examples
+
+**Create Meal:**
+```
+POST /meals
+{
+  "name": "Arroz com Feijão",
+  "description": "Refeição brasileira tradicional",
+  "calories": 450.0,
+  "is_healthy": true
+}
+```
+
+**Add Ingredient:**
+```
+POST /ingredients
+{
+  "name": "Arroz integral",
+  "quantity": "200g",
+  "meal_id": 1
+}
+```
+
+**Search Meals by Ingredient:**
+```
+GET /meals/search/by-ingredient?ingredient=frango
+```
