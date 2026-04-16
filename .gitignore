@@ -20,6 +20,11 @@ ENV/
 # Documentation (local notes)
 locais
 
+# Logs and PIDs
+logs/
+*.log
+.pids
+
 # IDE
 .vscode/
 .idea/

@@ -8,8 +8,8 @@ from pydantic import BaseModel
 # LangChain & LangGraph
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage
-from langchain.agents import create_agent          
-from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.prebuilt import create_react_agent
+from langgraph.checkpoint.memory import MemorySaver
 
 # MCP Adapters
 from mcp.client.sse import sse_client
@@ -27,10 +27,10 @@ if not GOOGLE_API_KEY:
     raise ValueError("A variável GOOGLE_API_KEY não está definida no .env")
 
 # ── LLM ───────────────────────────────────────────────────────────────────────
-llm = ChatGoogleGenerativeAI(model="gemini-3.1-flash-lite-preview", google_api_key=GOOGLE_API_KEY) #gemini-2.5-flash , ir trocando de modelo se chegar ao limite gratuito https://ai.google.dev/gemini-api/docs/models/
+llm = ChatGoogleGenerativeAI(model="models/gemini-flash-lite-latest", google_api_key=GOOGLE_API_KEY) # Modelo lite latest
 
 # ── MEMORY (persists across requests for the same thread_id) ──────────────────
-memory = InMemorySaver()
+memory = MemorySaver()
 thread_config = {"configurable": {"thread_id": str(uuid.uuid4())}}
 
 
@@ -56,10 +56,11 @@ def extract_text(content) -> str:
     return str(content)
 
 agent = None
+system_prompt = ""  # Global para armazenar o system prompt
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global agent
+    global agent, system_prompt
     url = "http://127.0.0.1:8002/sse"
 
     # NÃO fecha a sessão — fica aberta até ao shutdown
@@ -68,24 +69,32 @@ async def lifespan(app: FastAPI):
             await session.initialize()
 
             prompt_data = await session.get_prompt(
-                "health_advisor_prompt", arguments={"user_name": "Visitante"}
+                "meal_planner_assistant", arguments={"user_name": "Visitante"}
             )
             system_instruction = prompt_data.messages[0].content.text
 
-            # ── Resource ✅ lido aqui pelo cliente, injetado no system prompt ──
-            resource_data = await session.read_resource("info://app")
-            resource_text = resource_data.contents[0].text
-            print(f"\n📖 RESOURCE LIDO [info://app]:\n{resource_text}")
-            system_instruction += f"\n\nServer context:\n{resource_text}"
+            # ── Resources ✅ lidos aqui pelo cliente, injetados no system prompt ──
+            # Lê o guia nutricional (mais útil para o LLM)
+            nutrition_guide = await session.read_resource("meal://nutrition-guide")
+            nutrition_text = nutrition_guide.contents[0].text
+            print(f"\n📖 RESOURCE LIDO [meal://nutrition-guide]:\n{nutrition_text[:200]}...")
+            
+            # Lê o schema do banco de dados
+            db_schema = await session.read_resource("meal://db-schema")
+            schema_text = db_schema.contents[0].text
+            print(f"\n📖 RESOURCE LIDO [meal://db-schema]:\n{schema_text[:200]}...")
+            
+            resource_text = f"\n=== DATABASE SCHEMA ===\n{schema_text}\n\n=== NUTRITION GUIDE ===\n{nutrition_text}"
+            system_prompt = system_instruction + f"\n\nServer context:\n{resource_text}"
 
 
             tools = await load_mcp_tools(session)
-            print("\n=== TOOLS CARREGADAS ===", tools)
+            print("\n=== TOOLS CARREGADAS ===", len(tools), "tools")
 
-            agent = create_agent(
-                model=llm,
-                tools=tools,
-                system_prompt=system_instruction,
+            # Criar o agent SEM system prompt (vamos passar no chat)
+            agent = create_react_agent(
+                llm,
+                tools,
                 checkpointer=memory
             )
             print("✅ Agente inicializado com sucesso.")
@@ -94,7 +103,7 @@ async def lifespan(app: FastAPI):
 
     print("🛑 A encerrar o servidor.")
 
-app = FastAPI(title="Gemini Agent API", lifespan=lifespan)
+app = FastAPI(title="ChefMate - Meal Planner Agent API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -116,6 +125,7 @@ async def chat(req: ChatRequest):
             inputs, config=thread_config, stream_mode="values"
         ):
             msg = event["messages"][-1]
+            print(f"\n📨 Message type: {msg.type}, content type: {type(msg.content)}")
 
             if msg.type == "ai" and msg.tool_calls:
                 for tool_call in msg.tool_calls:
@@ -126,7 +136,8 @@ async def chat(req: ChatRequest):
             elif msg.type == "ai" and msg.content:
                 final_response = extract_text(msg.content)
                 print(f"\n💬 AI RESPONSE: {final_response}")
-
+        
+        print(f"\n🎯 Final response being sent: '{final_response}'")
         return {"reply": final_response}
 
     except Exception as e:

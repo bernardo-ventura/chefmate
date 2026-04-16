@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gemini Agent Chat</title>
+  <title>ChefMate - Meal Planner AI</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #f9f9f7;
+      --bg: #faf8f5;
       --surface: #ffffff;
-      --surface2: #f2f2ef;
-      --border: #e4e4de;
-      --accent: #5b4af0;
-      --accent2: #1ab5ac;
-      --text: #1a1a2e;
-      --text-muted: #9090a8;
-      --user-bg: #eeeaf9;
-      --agent-bg: #f0faf9;
+      --surface2: #f5f3f0;
+      --border: #e8e4de;
+      --accent: #ff6b35;
+      --accent2: #f7931e;
+      --text: #2c1810;
+      --text-muted: #9c8b7e;
+      --user-bg: #fff4ed;
+      --agent-bg: #f0f9f5;
       --font-display: 'Syne', sans-serif;
       --font-mono: 'DM Mono', monospace;
       --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.04);
@@ -370,10 +370,10 @@
 
   <!-- Header -->
   <header>
-    <div class="logo">✦</div>
+    <div class="logo">🍽️</div>
     <div class="header-text">
-      <h1>Gemini Agent</h1>
-      <p>MCP-powered · gemini-2.5-flash</p>
+      <h1>ChefMate</h1>
+      <p>AI Meal Planner · Powered by MCP</p>
     </div>
     <div class="status-dot">
       <div class="dot" id="statusDot"></div>
@@ -384,12 +384,13 @@
   <!-- Messages -->
   <div id="messages">
     <div class="empty-state" id="emptyState">
-      <div class="big-icon">◈</div>
-      <p>Ask me anything. I can also calculate your BMI using my built-in tools.</p>
+      <div class="big-icon">🍽️</div>
+      <p>Olá! Sou seu assistente de nutrição. Posso te ajudar a criar refeições saudáveis, calcular calorias e organizar ingredientes.</p>
       <div class="suggestions">
-        <button class="suggestion-chip" onclick="sendSuggestion(this)">What can you do?</button>
-        <button class="suggestion-chip" onclick="sendSuggestion(this)">Calculate BMI: 70kg, 1.75m</button>
-        <button class="suggestion-chip" onclick="sendSuggestion(this)">Give me a health tip</button>
+        <button class="suggestion-chip" onclick="sendSuggestion(this)">Liste todas as refeições</button>
+        <button class="suggestion-chip" onclick="sendSuggestion(this)">Crie uma refeição saudável com frango</button>
+        <button class="suggestion-chip" onclick="sendSuggestion(this)">Mostre as estatísticas do banco</button>
+        <button class="suggestion-chip" onclick="sendSuggestion(this)">Busque refeições com arroz</button>
       </div>
     </div>
   </div>
@@ -456,7 +457,7 @@
 
     const avatar = document.createElement('div');
     avatar.className = 'avatar';
-    avatar.textContent = role === 'user' ? 'you' : '✦';
+    avatar.textContent = role === 'user' ? 'você' : '👨‍🍳';
 
     const bubble = document.createElement('div');
     bubble.className = `bubble${isError ? ' error' : ''}`;
@@ -476,7 +477,7 @@
 
     const avatar = document.createElement('div');
     avatar.className = 'avatar';
-    avatar.textContent = '✦';
+    avatar.textContent = '👨‍🍳';
 
     const bubble = document.createElement('div');
     bubble.className = 'bubble';
