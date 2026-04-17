@@ -24,10 +24,10 @@ load_dotenv()
 
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 if not GOOGLE_API_KEY:
-    raise ValueError("A variável GOOGLE_API_KEY não está definida no .env")
+    raise ValueError("The GOOGLE_API_KEY variable is not defined in .env")
 
 # ── LLM ───────────────────────────────────────────────────────────────────────
-llm = ChatGoogleGenerativeAI(model="models/gemini-flash-lite-latest", google_api_key=GOOGLE_API_KEY) # Modelo lite latest
+llm = ChatGoogleGenerativeAI(model="models/gemini-flash-lite-latest", google_api_key=GOOGLE_API_KEY)
 
 # ── MEMORY (persists across requests for the same thread_id) ──────────────────
 memory = MemorySaver()
@@ -56,52 +56,53 @@ def extract_text(content) -> str:
     return str(content)
 
 agent = None
-system_prompt = ""  # Global para armazenar o system prompt
+system_prompt = ""  # Global variable to store the system prompt
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global agent, system_prompt
     url = "http://127.0.0.1:8002/sse"
 
-    # NÃO fecha a sessão — fica aberta até ao shutdown
+    # Does NOT close the session — stays open until shutdown
     async with sse_client(url) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
 
             prompt_data = await session.get_prompt(
-                "meal_planner_assistant", arguments={"user_name": "Visitante"}
+                "meal_planner_assistant", arguments={"user_name": "Visitor"}
             )
             system_instruction = prompt_data.messages[0].content.text
 
-            # ── Resources ✅ lidos aqui pelo cliente, injetados no system prompt ──
-            # Lê o guia nutricional (mais útil para o LLM)
+            # ── Resources read here by client, injected into system prompt ──
+            # Reads the nutritional guide (most useful for the LLM)
             nutrition_guide = await session.read_resource("meal://nutrition-guide")
             nutrition_text = nutrition_guide.contents[0].text
-            print(f"\n📖 RESOURCE LIDO [meal://nutrition-guide]:\n{nutrition_text[:200]}...")
+            # print(f"\nRESOURCE READ [meal://nutrition-guide]:\n{nutrition_text[:200]}...")
             
-            # Lê o schema do banco de dados
+            # Reads the database schema
             db_schema = await session.read_resource("meal://db-schema")
             schema_text = db_schema.contents[0].text
-            print(f"\n📖 RESOURCE LIDO [meal://db-schema]:\n{schema_text[:200]}...")
+            # print(f"\nRESOURCE READ [meal://db-schema]:\n{schema_text[:200]}...")
             
             resource_text = f"\n=== DATABASE SCHEMA ===\n{schema_text}\n\n=== NUTRITION GUIDE ===\n{nutrition_text}"
             system_prompt = system_instruction + f"\n\nServer context:\n{resource_text}"
 
 
             tools = await load_mcp_tools(session)
-            print("\n=== TOOLS CARREGADAS ===", len(tools), "tools")
+            print("\n=== TOOLS LOADED ===", len(tools), "tools")
 
-            # Criar o agent SEM system prompt (vamos passar no chat)
+            # Create the agent WITHOUT system prompt (we'll pass it in chat)
             agent = create_react_agent(
                 llm,
                 tools,
+                prompt=system_prompt,
                 checkpointer=memory
             )
-            print("✅ Agente inicializado com sucesso.")
+            print("Agent successfully initialized.")
 
-            yield  # ← app corre DENTRO dos async with, sessão mantém-se aberta
+            yield  # ← app runs INSIDE async with, session remains open
 
-    print("🛑 A encerrar o servidor.")
+    print("Shutting down the server.")
 
 app = FastAPI(title="ChefMate - Meal Planner Agent API", lifespan=lifespan)
 
@@ -116,7 +117,7 @@ app.add_middleware(
 @app.post("/chat")
 async def chat(req: ChatRequest):
     if agent is None:
-        raise HTTPException(status_code=503, detail="Agente ainda não inicializado.")
+        raise HTTPException(status_code=503, detail="Agent not yet initialized.")
     try:
         inputs = {"messages": [HumanMessage(content=req.message)]}
         final_response = ""
@@ -125,24 +126,24 @@ async def chat(req: ChatRequest):
             inputs, config=thread_config, stream_mode="values"
         ):
             msg = event["messages"][-1]
-            print(f"\n📨 Message type: {msg.type}, content type: {type(msg.content)}")
+            print(f"\nMessage type: {msg.type}, content type: {type(msg.content)}")
 
             if msg.type == "ai" and msg.tool_calls:
                 for tool_call in msg.tool_calls:
                     print(f"\n🔧 TOOL CALL: {tool_call['name']}")
                     print(f"   Args: {tool_call['args']}")
             elif msg.type == "tool":
-                print(f"\n✅ TOOL RESULT [{msg.name}]: {msg.content}")
+                print(f"\nTOOL RESULT [{msg.name}]: {msg.content}")
             elif msg.type == "ai" and msg.content:
                 final_response = extract_text(msg.content)
-                print(f"\n💬 AI RESPONSE: {final_response}")
+                print(f"\nAI RESPONSE: {final_response}")
         
-        print(f"\n🎯 Final response being sent: '{final_response}'")
+        print(f"\nFinal response being sent: '{final_response}'")
         return {"reply": final_response}
 
     except Exception as e:
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail="Erro interno. Verifica o terminal.")
+        raise HTTPException(status_code=500, detail="Internal error. Check the terminal.")
 
 
 @app.post("/reset")
@@ -150,7 +151,7 @@ async def reset():
     """Generate a new thread_id — effectively clears conversation history."""
     global thread_config
     thread_config = {"configurable": {"thread_id": str(uuid.uuid4())}}
-    return {"status": "Histórico limpo com sucesso"}
+    return {"status": "History successfully cleared"}
 
 
 @app.get("/health")

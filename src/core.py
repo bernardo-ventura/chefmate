@@ -141,7 +141,6 @@ def create_ingredient(session: Session, ingredient: IngredientCreate) -> Ingredi
     
     REQUISITO ESPECIAL: Retorna erro se quantity é inválida.
     """
-    # Validar quantity (REQUISITO: ERRO)
     if not validate_quantity(ingredient.quantity):
         raise InvalidQuantityError(
             f"Invalid quantity format: '{ingredient.quantity}'. "

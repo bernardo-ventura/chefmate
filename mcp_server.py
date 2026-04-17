@@ -183,7 +183,7 @@ def remove_meal(meal_id: int) -> str:
     """
     Delete a meal from the database.
     
-    ⚠️ SPECIAL REQUIREMENT: Raises exception if meal has ingredients.
+    Raises exception if meal has ingredients.
     You must delete all ingredients first before deleting the meal.
     
     Args:
@@ -214,7 +214,7 @@ def add_ingredient(name: str, quantity: str, meal_id: int) -> str:
     """
     Add an ingredient to a meal.
     
-    ⚠️ SPECIAL REQUIREMENT: Returns error if quantity format is invalid.
+    Returns error if quantity format is invalid.
     Quantity must be in format: "number + unit" (e.g., "200g", "1 xícara").
     
     Args:
@@ -312,7 +312,6 @@ def add_calories_as_string(meal_id: int, calories_to_add: str) -> str:
     """
     Add calories to a meal (accepts calories as STRING).
     
-    ⚠️ SPECIAL REQUIREMENT: Similar operation #1 - parameter is a string.
     
     Args:
         meal_id: The meal ID
@@ -335,8 +334,6 @@ def add_calories_as_string(meal_id: int, calories_to_add: str) -> str:
 def add_calories_as_float(meal_id: int, calories_to_add: float) -> str:
     """
     Add calories to a meal (accepts calories as FLOAT/NUMBER).
-    
-    ⚠️ SPECIAL REQUIREMENT: Similar operation #2 - parameter is a float.
     
     Args:
         meal_id: The meal ID
@@ -435,74 +432,6 @@ def meal_planner_assistant(user_name: str = "User") -> str:
         f"professional medical or nutritional guidance. Always encourage users to "
         f"consult with healthcare professionals for personalized advice."
     )
-
-
-# ============================================
-# ENTRY POINT
-# ============================================
-
-if __name__ == "__main__":
-    print("🍽️  Starting Meal Planner MCP Server...")
-    print("📡 Running on: http://127.0.0.1:8002/sse")
-    print("🔧 Tools: 13 meal & ingredient operations")
-    print("📚 Resources: 2 (db-schema, nutrition-guide)")
-    print("💡 Prompts: 1 (meal_planner_assistant)")
-    print("\nPress Ctrl+C to stop\n")
-    
-    mcp.run(transport="sse", host="127.0.0.1", port=8002)
-"""
-MCP Server using FastMCP
-Exposes: one tool, one resource, one prompt
-Run with: python mcp_server.py
-"""
-
-from fastmcp import FastMCP
-
-mcp = FastMCP(name="SimpleAssistantServer")
-
-
-# ─── TOOL ────────────────────────────────────────────────────────────────────
-@mcp.tool()
-def calculate_bmi(weight_kg: float, height_m: float) -> str:
-    """Calculate the Body Mass Index (BMI) given weight in kg and height in meters."""
-    if height_m <= 0:
-        return "Error: height must be greater than 0."
-    bmi = weight_kg / (height_m ** 2)
-    if bmi < 18.5:
-        category = "Underweight"
-    elif bmi < 25:
-        category = "Normal weight"
-    elif bmi < 30:
-        category = "Overweight"
-    else:
-        category = "Obese"
-    return f"BMI: {bmi:.2f} — Category: {category}"
-
-
-# ─── RESOURCE ────────────────────────────────────────────────────────────────
-@mcp.resource("info://app")
-def get_app_info() -> str:
-    """Returns general information about this MCP server / app."""
-    return (
-        "SimpleAssistantServer v1.0\n"
-        "Purpose: Demo MCP server with a tool, resource, and prompt.\n"
-        "Available tool: calculate_bmi\n"
-        "Built with: FastMCP + Python\n"
-    )
-
-
-# ─── PROMPT ──────────────────────────────────────────────────────────────────
-@mcp.prompt()
-def health_advisor_prompt(user_name: str = "User") -> str:
-    """A system prompt that turns the LLM into a friendly health advisor."""
-    return (
-        f"You are a friendly and knowledgeable health advisor. "
-        f"You are currently helping {user_name}. "
-        "You can calculate BMI using the `calculate_bmi` tool. "
-        "Always remind users that your advice is informational only and not a substitute "
-        "for professional medical guidance. Keep your tone warm and encouraging."
-    )
-
 
 # ─── ENTRY POINT ─────────────────────────────────────────────────────────────
 if __name__ == "__main__":
